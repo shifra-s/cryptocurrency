@@ -116,20 +116,11 @@ function addToReports(element) {
     var id = $(element).data("id");
     var name = $(element).data("name");
     console.log(coins.length);
-    var coinListHTML = '';
     if (coins.length >= 5) {
         console.log(coins);
         $(element).prop('checked', false);
 
         //alert('max 5 coins');
-        $.each(coins, function (index, value) {
-            //currently-added-coins
-            coinListHTML += `<div class="col-md-6"> ${value.name} </div> 
-                            <div class="col-md-6"> 
-                                    <input class="toggle ${value.id}" type="checkbox" onclick="removeCoin(this)" data-id=${value.id} data-name=${value.name} checked> 
-                                </div>`;
-        });
-        $('.currently-added-coins').html(coinListHTML);
         $('#myModal').modal('show');
         return;
     } if (coins.length < 5) {
