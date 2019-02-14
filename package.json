@@ -1,0 +1,10 @@
+{
+  "name": "",
+  "version": "",
+  "dependencies": {
+    "bootstrap": "^4.2.1",
+    "canvasjs": "^1.8.1",
+    "jquery": "^3.3.1",
+    "parallax": "0.0.0"
+  }
+}
