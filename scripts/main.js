@@ -171,25 +171,6 @@ $('.parallax-window').parallax({
     imageSrc: '/imgs/banner.jpg'
 });
 
-//search bar-filter coins depending on search
-$('#search-btn').click(function searchBar() {
-    //
-    var searchInput = $('#search-input').val();
-    var filter = searchInput.value.toUpperCase();
-    var findCoin = (str) => {
-        return str.charAt(0).toLowerCase() + str.slice(1);
-    }
-    search = findCoin(searchInput.val());
-    var coin = coinsResults.filter(function (coin) { return coin.id == search }) ? coinArray.filter(function (coin) { return coin.id == search }).length > 0 : coin = coinArray;
-
-    if (coin == true) {
-        coin = coinsResults.filter(function (coin) { return coin.id == search });
-    } else {
-        coin = coinsResults;
-        alert("the requested currency is not found, make sure you enter a proper name");
-    }
-});
-
 //link to get report every 2 seconds
 // https://www.cryptocompare.com/api/#-api-data-price
 
