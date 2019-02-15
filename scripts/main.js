@@ -1,4 +1,4 @@
-
+var modalCheckedButtons = [];
 //get the coins when page is loaded
 $(document).ready(function () {
     getCoins();
@@ -20,6 +20,7 @@ $('#coins').click(function (e) {
     getCoins();
 });
 
+//initialize empty array of coins
 //api call to show first 100 coins when "coins" link is clicked
 function getCoins() {
     $.ajax({
@@ -28,7 +29,7 @@ function getCoins() {
     }).done(function (d) {
         if (typeof d === 'string')
             d = JSON.parse(d);
-        let coinsResults = d;
+        coinsResults = d;
 
         //loop through the results and use the template to display each coin
         for (let i = 0; i < 100; i++) {
@@ -49,7 +50,7 @@ function displayMainContent(data) {
                         <div class="col-md-5"></div>
                         <div class="col-md-3">
                             <label class="switch">
-                            <input class="toggle toggle-class" type="checkbox" data-id="${data.id}" data-name="${data.name}">
+                            <input class="toggle toggle-class ${data.id}" type="checkbox" data-id="${data.id}" data-name="${data.name}">
                             <span class="slider round"></span>
                             </label>
                         </div>
@@ -88,74 +89,45 @@ function showMore(element) {
     let euro = localStorage.getItem("eur" + id);
     let usd = localStorage.getItem("usd" + id);
     let nis = localStorage.getItem("nis" + id)
-    let html = '<div><img src=' + image + '></img> <p class="dollars"> $' + usd + '</p> <p class="euros"> €' + euro + '</p><p class="shekels">' + nis + ' NIS </p></div>';
+    let html = '<div><img src=' + image + '></img> <p class="dollars"> $' + usd + '</p> <p class="euros"> €' + euro + '</p><p class="shekels"> ₪' + nis + ' </p></div>';
     $(element).next("div").first().toggle().html(html);
 }
 
-/* // add to list of getting live reports
-const liveReportsArray
-function addToReports(el, id) {
-    coinForLiveReport = $('#more-info-btn').prop('checked');
-    if (!liveReportsArray) {
-        var liveReportsArray = [];
-    }
-    if (liveReportsArray.length < 5) {
-        liveReportsArray.push(coinForLiveReport);
-        console.log('these are the coins for report', liveReportsArray);
-    } else if (liveReportsArray.length == 5) {
-        coinForLiveReport.prop('checked', false);
-        alert('you\'ve already selected five coins and that\'s the max!')
-    }
-}
- */
 
-
-const coins = [];
+let coins = [];
 function addToReports(element) {
-    console.log(element);
     var id = $(element).data("id");
     var name = $(element).data("name");
-    console.log(coins.length);
     if (coins.length >= 5) {
-        console.log(coins);
         $(element).prop('checked', false);
-
-        //alert('max 5 coins');
         $('#myModal').modal('show');
         return;
     } if (coins.length < 5) {
         var isChecked = $(element).is(':checked');
         if (isChecked) {
-            //if this checkbox is checked add the coin in array
+            //if this checkbox is checked, add the coin to the array
             coins.push({ 'id': id, 'name': name });
         } else {
-            //if this checkbox is unchecked remove the coin from array
-            // removeCoin(id,coins,element);
+            //if this checkbox is unchecked, remove the coin from array
             for (var i = 0; i < coins.length - 1; i++) {
                 if (coins[i]['id'] === id) {
-                    coins.splice(i, 1);
-                    //console.log(element);
-                    //console.log(coins);
+                    coins.splice(i, 1); 
                 } else {
                     coins.push(id);
-                    //console.log(coins);
                 }
             }
         }
     }
 }
 
-function removeCoin(element) {
-    for (var i = 0; i < coins.length - 1; i++) {
-        if (coins[i]['id'] === id) {
-            coins.splice(i, 1);
-            console.log(element);
-            var id = $(element).data("id");
-            $(id).prop('checked', false);
+//remove coin from array
+function removeCoin(id, array) {
+    for (var i = 0; i < array.length; i++) {
+        if (array[i]['id'] === id) {
+            array.splice(i, 1);
         }
     }
 }
-
 
 //parallax
 $('.parallax-window').parallax({
@@ -170,19 +142,18 @@ $(document).on('click', '.toggle-class', function () {
     var id = $(this).data('id');
     var name = $(this).data('name');
     var isChecked = $(this).is(':checked');
-
+    $('.' + id).prop('checked', isChecked);
     if (coins.length == 5) {
         console.log('coin length is 5');
         if (!isChecked) {
             console.log('coin length is 5 is checked false');
             $(this).prop('checked', false);
-            // turnOffCheckbox();
-            removeCoin(id);
-            
+            removeCoin(id, coins);
+
         } else {
             console.log('coin length is 5 is checked true');
             $(this).prop('checked', false);
-            // turnOffCheckbox();
+            modalCheckedButtons = coins;
             showAlertModal();
             return;
         }
@@ -193,14 +164,13 @@ $(document).on('click', '.toggle-class', function () {
             coins.push({ 'id': id, 'name': name });
         } else {
             console.log('coins length < 5 ELSE block');
-            removeCoin(id);
+            removeCoin(id, coins);
         }
     } else {
         console.log('else block');
         if (isChecked) {
             console.log(coins);
             $(this).prop('checked', false);
-            //console.log('this is the id---->',$(this).data('id'))
             // turnOffCheckbox();
             showAlertModal();
             return;
@@ -209,17 +179,44 @@ $(document).on('click', '.toggle-class', function () {
 
 });
 
-//remove coin from array
-function removeCoin(id) {
-    for (var i = 0; i < coins.length; i++) {
-        if (coins[i]['id'] === id) {
-            console.log('COINS SPLICE');
-            coins.splice(i, 1);
-            //console.log(element);
-            //console.log(coins);
-        }
+
+//let user change the selected coins in the modal - this updates a new array
+$(document).on('click', '.toggle-class-modal', function () {
+    console.log('toggle class modal');
+    var id = $(this).data('id');
+    var name = $(this).data('name');
+    var isChecked = $(this).is(':checked');
+    $('.' + id).prop('checked', isChecked);
+    if (!isChecked) {
+        removeCoin(id, modalCheckedButtons);
+    } else {
+        modalCheckedButtons.push({ 'id': id, 'name': name });
     }
-}
+    console.log(modalCheckedButtons);
+});
+
+
+
+// on save - coins array will be changed to the array saved in the modal
+$(document).on('click', '.save-changes', function () {
+    //coins = modalCheckedButtons;
+    coins = [];
+    $.each(modalCheckedButtons, function(index,value) {
+        coins.push(value);
+    });
+    console.log(coins);
+    $('#myModal').modal('hide');
+});
+
+// on cancel-make sure each of the original coins selected are checked 
+// (user may have unchecked them in modal before clicking "cancel")
+$(document).on('click', '.cancel-changes', function(){
+    $.each(coins, function(index,value) {
+        $('.'+value.id).prop('checked', true);
+    });
+    console.log(value.id);
+    $('#myModal').modal('hide');
+});
 
 //show a pop up to tick off certain coins
 function showAlertModal() {
@@ -227,12 +224,9 @@ function showAlertModal() {
     $.each(coins, function (index, value) {
         coinListHTML += `<div class="col-md-6"> ${value.name} </div> 
                         <div class="col-md-6"> 
-                                <input class="toggle toggle-class" type="checkbox" data-id=${value.id} data-name=${value.name} checked> 
+                                <input class="toggle toggle-class-modal" type="checkbox" data-id=${value.id} data-name=${value.name} checked> 
                             </div>`;
     });
     $('.currently-added-coins').html(coinListHTML);
     $('#myModal').modal('show');
 }
-
-
-
