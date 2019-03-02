@@ -11,22 +11,17 @@
     <link rel="stylesheet" href="main.css">
     <script src="/node_modules/jquery/dist/jquery.min.js"></script>
     <script src="/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="/parallax.js-1.5.0/parallax.js"></script>
-    <script src="/canvasjs/dist/canvasjs.min.js"></script>
-
+    <script src="/node_modules/parallax.js-1.5.0/parallax.js"></script>
+    
+     
 </head>
 
 <body id="all-content">
     <header>
-            <div class="parallax-window" data-parallax="scroll" data-image-src="imgs/banner.jpg"> 
-            
-            </div>
+        <div class="parallax-window" data-parallax="scroll" data-image-src="imgs/banner.jpg">
+
+        </div>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <!-- <a class="navbar-brand" href="#">Cryptonite</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav"
-                aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button> -->
 
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav navbar-nav mr-auto mt-2 mt-lg-0">
@@ -34,9 +29,11 @@
                         <a class="nav-link" id="coins" href="#">Home <span class="sr-only">(current)</span></a>
                     </li>
                     <li class="nav-item">
+
                         <a class="nav-link" id="live-reports" href="#">Live Reports</a>
                     </li>
                     <li class="nav-item">
+
                         <a class="nav-link" id="about" href="#">About</a>
                     </li>
 
@@ -51,7 +48,10 @@
     </header>
 
     <div id="main-content">
+        <div id="chartContainer" style="height: 300px; width: 100%; display:none;"></div>
+            
         <div class="row" id="each-coin">
+
         </div>
 
         <!-- Modal -->
@@ -61,7 +61,7 @@
                 <!-- Modal content-->
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <button type="button" class="close cancel-changes" data-dismiss="modal">&times;</button>
                         <h4 class="modal-title">Currently added coins</h4>
                     </div>
                     <div class="modal-body">
@@ -82,11 +82,13 @@
             </div>
         </div>
 
-        <canvas id="live-reports-chart" style="height:400px;"></canvas>
+        <div id="live-reports-chart" style="height:400px;"></div>
 
         <div class="loader"></div>
         <script src="scripts/main.js"></script>
 
 </body>
+<script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+<script src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
 
 </html>
