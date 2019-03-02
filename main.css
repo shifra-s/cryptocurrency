@@ -100,7 +100,7 @@ main{
  }
 
  input#search-input{
-    border: 1px solid rgb(194, 189, 189)
+    border: 1px solid #4FAE84
  }
 
  .navbar-light .navbar-nav .nav-link:focus, .navbar-light .navbar-nav .nav-link:hover {
@@ -110,4 +110,13 @@ main{
 
  .modal-header {
     display: block;
+}
+
+.btn-success{
+    background-color:#079e69;
+    border-color: #079e69;
+}
+
+div.modal-content{
+    font-family: 'Karla', sans-serif;
 }
