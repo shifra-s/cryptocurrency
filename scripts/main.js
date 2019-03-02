@@ -2,12 +2,17 @@
 let modalCheckedButtons = [];
 let coins = [];
 
-//get the coins when page is loaded
-$(document).ready(function () {
+//get coins only when page is loaded-including imgs
+$(window).on('load', function () {
     getCoins();
-})
+});
 
 $(window).ready(hideLoader);
+
+//parallax
+$('.parallax-window').parallax({
+    imageSrc: '/imgs/banner.jpg'
+});
 
 function hideLoader() {
     $('.loader').hide();
@@ -96,33 +101,6 @@ function showMore(element) {
     $(element).next("div").first().toggle().html(html);
 }
 
-
-// function addToReports(element) {
-//     var id = $(element).data("id");
-//     var name = $(element).data("name");
-//     var symbol = $(element).data("symbol");
-//     if (coins.length >= 5) {
-//         $(element).prop('checked', false);
-//         $('#myModal').modal('show');
-//         return;
-//     } if (coins.length < 5) {
-//         var isChecked = $(element).is(':checked');
-//         if (isChecked) {
-//             //if this checkbox is checked, add the coin to the array
-//             coins.push({ 'id': id, 'name': name, 'symbol' :symbol });
-//         } else {
-//             //if this checkbox is unchecked, remove the coin from array
-//             for (var i = 0; i < coins.length - 1; i++) {
-//                 if (coins[i]['id'] === id) {
-//                     coins.splice(i, 1);
-//                 } else {
-//                     coins.push(id);
-//                 }
-//             }
-//         }
-//     }
-// }
-
 //remove coin from array
 function removeCoin(id, array) {
     for (var i = 0; i < array.length; i++) {
@@ -131,11 +109,6 @@ function removeCoin(id, array) {
         }
     }
 }
-
-//parallax
-$('.parallax-window').parallax({
-    imageSrc: '/imgs/banner.jpg'
-});
 
 //get symbols of chosen coins
 function getSymbols() {
@@ -146,28 +119,200 @@ function getSymbols() {
     }
 }
 
-//API call to get price of multiple coins - we will do this every 2 seconds
-function APIcallPrice(symbols) {
-    $.ajax({
-        url: 'https://min-api.cryptocompare.com/data/pricemulti?fsyms=' + symbols + '&tsyms=USD',
-        method: 'GET'
-    }).done(function (d) {
-        if (typeof d === 'string')
-            d = JSON.parse(d);
-        console.log(d)
-    }
-    )
-};
-
-//get price of coins
-function getPrice(coins) {
+$('#live-reports').click(function () {
     if (coins.length < 1) {
         alert('you havent picked any coins!');
         return;
-    } else {
-        let symbols = getSymbols();
-        APIcallPrice(symbols);
     }
+    else {
+        $('#each-coin').hide();
+        $('#chartContainer').show();
+        APIcallPrice(coins);
+    }
+});
+
+//use second link to get coins since third link doesn't have most coins
+function APIcallPrice(coins) {
+    let objArr1 = [];
+    let objArr2 = [];
+    let objArr3 = [];
+    let objArr4 = [];
+    let objArr5 = [];
+    for (let i = 0; i < coins.length; i++) {
+        let id = coins[i].id;
+        let symbol = coins[i].symbol;
+        //console.log(id);
+        //console.log('symbol', symbol);
+        
+        // updateData(id, (resp, err) => {
+            
+        //     if(!err) {
+        //         console.log("resp here: ",resp);
+        //         objArr.push(resp);
+        //     } else {console.log("error", err);}
+            ``
+        // });
+        window.setInterval(() => {
+            if (coins[0] !== 'undefined') {
+                updateData(id, (resp, err) => {
+                    console.log('resp here: ',resp);
+                    objArr1.push(resp);
+                });
+            }
+            if (coins[1] !== 'undefined') {
+                updateData(id, (resp, err) => {
+                    console.log('resp here: ',resp);
+                    objArr2.push(resp);
+                });
+            }
+            if (coins[2] !== 'undefined') {
+                updateData(id, (resp, err) => {
+                    console.log('resp here: ',resp);
+                    objArr3.push(resp);
+                });
+            }
+            if (coins[3] !== 'undefined') {
+                updateData(id, (resp, err) => {
+                    console.log('resp here: ',resp);
+                    objArr4.push(resp);
+                });
+            }
+            if (coins[4] !== 'undefined') {
+                updateData(id, (resp, err) => {
+                    console.log('resp here: ',resp);
+                    objArr5.push(resp);
+                });
+            }
+            
+            console.log("new object", objArr1, objArr2, objArr3, objArr4, objArr5);
+            displayGraph(objArr1, objArr2, objArr3, objArr4, objArr5);
+        }, 20000);
+       
+    }
+}
+
+// function msToTime(duration) {
+//     //var milliseconds = parseInt((duration % 1000) / 100),
+//       seconds = parseInt((duration / 1000) % 60),
+//       minutes = parseInt((duration / (1000 * 60)) % 60),
+//       hours = parseInt((duration / (1000 * 60 * 60)) % 24);
+  
+//     hours = (hours < 10) ? "0" + hours : hours;
+//     minutes = (minutes < 10) ? "0" + minutes : minutes;
+//     seconds = (seconds < 10) ? "0" + seconds : seconds;
+  
+//     return hours + ":" + minutes + ":" + seconds + "." + milliseconds;
+//   }
+
+function updateData(id, callback) {
+        $.ajax({
+            url: 'https://api.coingecko.com/api/v3/coins/' + id,
+            method: 'GET'
+        }).done(function (resp) {
+                let price = resp.market_data.ath.usd;
+                
+                //let convert = msToTime(time);
+
+                let newObj = {};
+                newObj['y'] = price;
+                //newObj['x'] = time;
+                callback(newObj);
+        });
+}
+
+function displayGraph(graphObj1, graphObj2, graphObj3, graphObj4, graphObj5) {
+    let date = new Date();
+    let time = date.setTime(date.getTime() + 30000);
+    graphObj1.push({x: time});
+    graphObj2.push({x: time});
+    graphObj3.push({x: time});
+    graphObj4.push({x: time});
+    graphObj5.push({x: time});
+    var options = {
+        exportEnabled: true,
+        animationEnabled: true,
+        title: {
+            text: "Coin Value Over Time"
+        },
+        subtitles: [{
+            text: "Click Legend to Hide or Unhide Data Series"
+        }],
+        axisX: {
+            title: "Time"
+        },
+        axisY: {
+            title: "Coin Value",
+            titleFontColor: "#4F81BC",
+            lineColor: "#4F81BC",
+            labelFontColor: "#4F81BC",
+            tickColor: "#4F81BC",
+            includeZero: false
+        },
+        toolTip: {
+            shared: true
+        },
+        legend: {
+            cursor: "pointer",
+            itemclick: toggleDataSeries
+        },
+        data: [{
+            type: "spline",
+            xValueType: "dateTime",
+            name: "Units Sold",
+            showInLegend: true,
+            xValueFormatString: "hh:mm:ss TT",
+            yValueFormatString: "$###.00",
+            dataPoints: graphObj1 || []
+        },
+        {
+            type: "spline",
+            xValueType: "dateTime",
+            name: "Units Sold",
+            showInLegend: true,
+            xValueFormatString: "hh:mm:ss TT",
+            yValueFormatString: "$###.00",
+            dataPoints: graphObj2 || []
+        },
+        {
+            type: "spline",
+            xValueType: "dateTime",
+            name: "Units Sold",
+            showInLegend: true,
+            xValueFormatString: "hh:mm:ss TT",
+            yValueFormatString: "$###.00",
+            dataPoints: graphObj3 || []
+        },
+        {
+            type: "spline",
+            xValueType: "dateTime",
+            name: "Units Sold",
+            showInLegend: true,
+            xValueFormatString: "hh:mm:ss TT",
+            yValueFormatString: "$###.00",
+            dataPoints: graphObj4 || []
+        },
+        {
+            type: "spline",
+            xValueType: "dateTime",
+            name: "Profit",
+            axisYType: "secondary",
+            showInLegend: true,
+            xValueFormatString: "hh:mm:ss TT",
+            yValueFormatString: "$###.00",
+            dataPoints: graphObj5 || []
+        }]
+    };
+    //options.data[0].dataPoints.push(graphObj)
+    $("#chartContainer").CanvasJSChart(options);
+}
+
+function toggleDataSeries(e) {
+    if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+        e.dataSeries.visible = false;
+    } else {
+        e.dataSeries.visible = true;
+    }
+    e.chart.render();
 }
 
 //function for when user clicks on the coin toggle
@@ -178,13 +323,10 @@ $(document).on('click', '.toggle-class', function () {
     var isChecked = $(this).is(':checked');
     $('.' + id).prop('checked', isChecked);
     if (coins.length == 5) {
-        console.log('coin length is 5');
         if (!isChecked) {
-            console.log('coin length is 5 is checked false');
             $(this).prop('checked', false);
             removeCoin(id, coins);
         } else {
-            console.log('coin length is 5 is checked true');
             $(this).prop('checked', false);
             //modalCheckedButtons = coins;
             for (let i = 0; i < coins.length; i++) {
@@ -194,18 +336,14 @@ $(document).on('click', '.toggle-class', function () {
             return;
         }
     } else if (coins.length < 5) {
-        console.log('coins length < 5');
         if (isChecked) {
             //if this checkbox is checked add the coin to the array
             coins.push({ 'id': id, 'name': name, 'symbol': symbol });
         } else {
-            console.log('coins length < 5 ELSE block');
             removeCoin(id, coins);
         }
     } else {
-        console.log('else block');
         if (isChecked) {
-            console.log(coins);
             $(this).prop('checked', false);
             showAlertModal();
             return;
@@ -225,9 +363,6 @@ $(document).on('click', '.toggle-class-modal', function () {
     } else {
         modalCheckedButtons.push({ 'id': id, 'name': name, 'symbol': symbol });
     }
-    console.log('modal checked btns----->', modalCheckedButtons);
-    console.log('coins----->', coins);
-
 });
 
 // on save - coins array will be changed to the array saved in the modal
@@ -250,8 +385,14 @@ $(document).on('click', '.cancel-changes', function () {
     clearSelectedCoinsModal();
 });
 
-//show a pop up to tick off certain coins
+//show the modal that was built
 function showAlertModal() {
+    buildModal();
+    showModal();
+}
+
+//build modal
+function buildModal() {
     var coinListHTML = '';
     $.each(coins, function (index, value) {
         coinListHTML += `<div class="col-md-6"> ${value.name} </div> 
@@ -260,8 +401,8 @@ function showAlertModal() {
                             </div>`;
     });
     $('.currently-added-coins').html(coinListHTML);
-    showModal();
 }
+
 
 //empty the array of coins selected in the modal
 function clearSelectedCoinsModal() {
@@ -282,3 +423,5 @@ function hideModal() {
 function showModal() {
     $('#myModal').modal('show');
 }
+
+
