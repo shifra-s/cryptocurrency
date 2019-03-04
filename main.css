@@ -150,18 +150,42 @@ header{
 #about-img{
     width:160px;
     border:1px solid rgb(92, 92, 92);
+    margin-left:-15px;
+}
+
+div img#about-img{
+    margin-left: 5.5%;
 }
 
 #about-header{
     font-weight:700;
+    margin-left: 6%;
     text-align:justify;
     color:#013CAE;
 }
 
 #about-body{
     text-align:justify;
-    margin-left:10px;
+    margin-left: 6%;
     color:#013CAE;
+}
+
+@media screen and (min-width: 1024px) {
+    #about-header {
+        margin-left:3%;
+    }
+    #about-body{
+        margin-left:3%;
+    }
+}
+
+@media screen and (min-width: 1440px) {
+    #about-header {
+        margin-left:1%;
+    }
+    #about-body{
+        margin-left:1%;
+    }
 }
 
 .project-title{
