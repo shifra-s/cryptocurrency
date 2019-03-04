@@ -1,4 +1,4 @@
-//global variables
+//global variables - initialize empty array of coins & empty of array of btns checked in the modal
 let modalCheckedButtons = [];
 let coins = [];
 
@@ -13,7 +13,6 @@ $('#coins').click(function (e) {
     getCoins();
 });
 
-//initialize empty array of coins
 //api call to show first 100 coins when "coins" link is clicked
 function getCoins() {
     $('#loading').show();
@@ -126,6 +125,7 @@ function getSymbols() {
     }
 }
 
+//go to the live reports page if at least one coin is selected
 $('#live-reports').click(function () {
     if (coins.length < 1) {
         alert('you havent picked any coins!');
@@ -204,7 +204,6 @@ function updateData(id, callback) {
                 let price = resp.market_data.ath.usd;
                 let date = new Date();
                 let time = date.setTime(date.getTime() + 30000);
-                //let convert = msToTime(time);
 
                 let newObj = {};
                 newObj['y'] = price;
