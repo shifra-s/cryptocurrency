@@ -11,7 +11,8 @@
     <link rel="stylesheet" href="main.css">
     <script src="/node_modules/jquery/dist/jquery.min.js"></script>
     <script src="/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="/node_modules/parallax.js-1.5.0/parallax.js"></script>
+    <script src="/node_modules/jquery-parallax.js/parallax.min.js"></script>
+    <script src="/node_modules/canvasjs/dist/jquery.canvasjs.min.js"></script>
     
      
 </head>
@@ -48,8 +49,8 @@
     </header>
 
     <div id="main-content">
+        <div class="row" style="display:none;" id="loading"> <img src="imgs/progress.gif"></div>
         <div id="chartContainer" style="height: 300px; width: 100%; display:none;"></div>
-            
         <div class="row" id="each-coin">
 
         </div>
@@ -88,7 +89,4 @@
         <script src="scripts/main.js"></script>
 
 </body>
-<script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
-<script src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
-
 </html>
