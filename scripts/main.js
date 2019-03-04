@@ -7,20 +7,11 @@ $(window).on('load', function () {
     getCoins();
 });
 
-$(window).ready(hideLoader);
 
 //parallax
 $('.parallax-window').parallax({
     imageSrc: '/imgs/banner.jpg'
 });
-
-function hideLoader() {
-    $('.loader').hide();
-}
-
-function showLoader() {
-    $('.loader').show();
-}
 
 //get the coins when "home" is clicked in navbar
 $('#coins').click(function (e) {
@@ -77,6 +68,25 @@ function displayMainContent(data) {
     $('#each-coin').append(html);
 }
 
+$("#coins").on("click", function() {
+   $('#chartContainer').hide();
+   $('#each-coin').show();
+});
+
+//search bar-find coin
+$("#search-btn").on("click", function() {
+    let g = $("#search-input").val().toLowerCase();
+    $(".coin-text .row #symbol").each(function() {
+        let s = $(this).text();
+        $(this).closest('#coin')[ s.indexOf(g) !== -1 ? 'show' : 'hide' ]();
+    });
+});
+$('input[type=search]').on('search', function () {
+    $(".coin-text .row #symbol").each(function() {
+        $(this).closest('#coin')['show']();
+    });
+});
+
 //api call to get more info - set data in local storage
 function moreInfoData(id) {
     $.ajax({
@@ -125,6 +135,7 @@ $('#live-reports').click(function () {
         return;
     }
     else {
+        $('#loading').show();
         $('#each-coin').hide();
         $('#chartContainer').show();
         APIcallPrice(coins);
@@ -133,177 +144,156 @@ $('#live-reports').click(function () {
 
 //use second link to get coins since third link doesn't have most coins
 function APIcallPrice(coins) {
-    let objArr1 = [];
-    let objArr2 = [];
-    let objArr3 = [];
-    let objArr4 = [];
-    let objArr5 = [];
+    let dataPoints = [];
+    let dataPoints2 = [];
+    let dataPoints3 = [];
+    let dataPoints4 = [];
+    let dataPoints5 = [];
+    let chart  = displayGraph(dataPoints, dataPoints2, dataPoints3, dataPoints4, dataPoints5);
     for (let i = 0; i < coins.length; i++) {
-        let id = coins[i].id;
-        let symbol = coins[i].symbol;
-        //console.log(id);
-        //console.log('symbol', symbol);
-        
-        // updateData(id, (resp, err) => {
-            
-        //     if(!err) {
-        //         console.log("resp here: ",resp);
-        //         objArr.push(resp);
-        //     } else {console.log("error", err);}
-            ``
-        // });
-        window.setInterval(() => {
-            if (coins[0] !== 'undefined') {
-                updateData(id, (resp, err) => {
-                    console.log('resp here: ',resp);
-                    objArr1.push(resp);
-                });
-            }
-            if (coins[1] !== 'undefined') {
-                updateData(id, (resp, err) => {
-                    console.log('resp here: ',resp);
-                    objArr2.push(resp);
-                });
-            }
-            if (coins[2] !== 'undefined') {
-                updateData(id, (resp, err) => {
-                    console.log('resp here: ',resp);
-                    objArr3.push(resp);
-                });
-            }
-            if (coins[3] !== 'undefined') {
-                updateData(id, (resp, err) => {
-                    console.log('resp here: ',resp);
-                    objArr4.push(resp);
-                });
-            }
-            if (coins[4] !== 'undefined') {
-                updateData(id, (resp, err) => {
-                    console.log('resp here: ',resp);
-                    objArr5.push(resp);
-                });
-            }
-            
-            console.log("new object", objArr1, objArr2, objArr3, objArr4, objArr5);
-            displayGraph(objArr1, objArr2, objArr3, objArr4, objArr5);
-        }, 20000);
-       
+    let updateChart = function () {
+        if (typeof(coins[0]) !== 'undefined') {
+            let id = coins[0].id;
+            let symbol = coins[0].symbol;
+            updateData(id, (resp, err) => {
+                dataPoints.push(resp);
+            });
+        }
+        if (typeof(coins[1]) !== 'undefined') {
+            let id = coins[1].id;
+            let symbol = coins[1].symbol;
+            updateData(id, (resp, err) => {
+                dataPoints2.push(resp);
+            });
+        }
+        if (typeof(coins[2]) !== 'undefined') {
+            let id = coins[2].id;
+            let symbol = coins[2].symbol;
+            updateData(id, (resp, err) => {
+                dataPoints3.push(resp);
+            });
+        }
+        if (typeof(coins[3]) !== 'undefined') {
+            let id = coins[3].id;
+            let symbol = coins[3].symbol;
+            updateData(id, (resp, err) => {
+                dataPoints4.push(resp);
+            });
+        }
+        if (typeof(coins[4]) !== 'undefined') {
+            let id = coins[4].id;
+            let symbol = coins[4].symbol;
+            updateData(id, (resp, err) => {
+                dataPoints5.push(resp);
+            });
+        }
+        chart.options.title.text = "Live Reports of Cryptocurrency Value";
+        chart.render();
+        $('#loading').hide();
+    };
+
+    // update chart every 2 seconds
+    setInterval(function(){updateChart()}, 2000);
     }
 }
 
-// function msToTime(duration) {
-//     //var milliseconds = parseInt((duration % 1000) / 100),
-//       seconds = parseInt((duration / 1000) % 60),
-//       minutes = parseInt((duration / (1000 * 60)) % 60),
-//       hours = parseInt((duration / (1000 * 60 * 60)) % 24);
-  
-//     hours = (hours < 10) ? "0" + hours : hours;
-//     minutes = (minutes < 10) ? "0" + minutes : minutes;
-//     seconds = (seconds < 10) ? "0" + seconds : seconds;
-  
-//     return hours + ":" + minutes + ":" + seconds + "." + milliseconds;
-//   }
-
+//update data in chart
 function updateData(id, callback) {
         $.ajax({
             url: 'https://api.coingecko.com/api/v3/coins/' + id,
             method: 'GET'
         }).done(function (resp) {
                 let price = resp.market_data.ath.usd;
-                
+                let date = new Date();
+                let time = date.setTime(date.getTime() + 30000);
                 //let convert = msToTime(time);
 
                 let newObj = {};
                 newObj['y'] = price;
-                //newObj['x'] = time;
+                newObj['x'] = time;
                 callback(newObj);
         });
 }
 
-function displayGraph(graphObj1, graphObj2, graphObj3, graphObj4, graphObj5) {
-    let date = new Date();
-    let time = date.setTime(date.getTime() + 30000);
-    graphObj1.push({x: time});
-    graphObj2.push({x: time});
-    graphObj3.push({x: time});
-    graphObj4.push({x: time});
-    graphObj5.push({x: time});
-    var options = {
-        exportEnabled: true,
-        animationEnabled: true,
-        title: {
-            text: "Coin Value Over Time"
-        },
-        subtitles: [{
-            text: "Click Legend to Hide or Unhide Data Series"
-        }],
-        axisX: {
-            title: "Time"
-        },
-        axisY: {
-            title: "Coin Value",
-            titleFontColor: "#4F81BC",
-            lineColor: "#4F81BC",
-            labelFontColor: "#4F81BC",
-            tickColor: "#4F81BC",
-            includeZero: false
-        },
-        toolTip: {
-            shared: true
-        },
-        legend: {
-            cursor: "pointer",
-            itemclick: toggleDataSeries
-        },
-        data: [{
-            type: "spline",
-            xValueType: "dateTime",
-            name: "Units Sold",
-            showInLegend: true,
-            xValueFormatString: "hh:mm:ss TT",
-            yValueFormatString: "$###.00",
-            dataPoints: graphObj1 || []
-        },
-        {
-            type: "spline",
-            xValueType: "dateTime",
-            name: "Units Sold",
-            showInLegend: true,
-            xValueFormatString: "hh:mm:ss TT",
-            yValueFormatString: "$###.00",
-            dataPoints: graphObj2 || []
-        },
-        {
-            type: "spline",
-            xValueType: "dateTime",
-            name: "Units Sold",
-            showInLegend: true,
-            xValueFormatString: "hh:mm:ss TT",
-            yValueFormatString: "$###.00",
-            dataPoints: graphObj3 || []
-        },
-        {
-            type: "spline",
-            xValueType: "dateTime",
-            name: "Units Sold",
-            showInLegend: true,
-            xValueFormatString: "hh:mm:ss TT",
-            yValueFormatString: "$###.00",
-            dataPoints: graphObj4 || []
-        },
-        {
-            type: "spline",
-            xValueType: "dateTime",
-            name: "Profit",
-            axisYType: "secondary",
-            showInLegend: true,
-            xValueFormatString: "hh:mm:ss TT",
-            yValueFormatString: "$###.00",
-            dataPoints: graphObj5 || []
-        }]
-    };
-    //options.data[0].dataPoints.push(graphObj)
-    $("#chartContainer").CanvasJSChart(options);
+function displayGraph(dataPoints, dataPoints2, dataPoints3, dataPoints4, dataPoints5) {
+   let chart = new CanvasJS.Chart("chartContainer", {
+            exportEnabled: true,
+            animationEnabled: true,
+            title: {
+                text: "Coin Value Over Time"
+            },
+            axisX:{
+                title: "Time",
+                intervalType: "minute",
+                valueFormatString: "hh:mm:ss tt",
+            },
+            axisY: {
+                title: "Coin Value",
+                titleFontColor: "#4F81BC",
+                lineColor: "#4F81BC",
+                labelFontColor: "#4F81BC",
+                tickColor: "#4F81BC",
+                includeZero: false,
+                prefix: "$",
+            },
+            toolTip: {
+                shared: true
+            },
+            legend: {
+                cursor: "pointer",
+                itemclick: toggleDataSeries
+            },
+            data : [{
+                    type : "line",
+                    xValueType: "dateTime",
+                    name: coins[0].name + "(" + coins[0].symbol + ")",
+                    xValueFormatString: "hh:mm:ss TT",
+                    yValueFormatString: "##.00mn",
+                    showInLegend: typeof(coins[0]) !== "undefined" ? true : false,
+                    dataPoints : dataPoints
+                },
+                {
+                    type : "line",
+                    xValueType: "dateTime",
+                    name: typeof(coins[1]) !== "undefined" ? coins[1].name + "(" + coins[1].symbol + ")" : "",
+                    xValueFormatString: "hh:mm:ss TT",
+                    yValueFormatString: "##.00mn",
+                    showInLegend: typeof(coins[1]) !== "undefined" ? true : false,
+                    dataPoints : dataPoints2
+                },
+                {
+                    type : "line",
+                    xValueType: "dateTime",
+                    name:typeof(coins[2]) !== "undefined" ? coins[2].name + "(" + coins[2].symbol + ")" : "",
+                    xValueFormatString: "hh:mm:ss TT",
+                    yValueFormatString: "##.00mn",
+                    showInLegend: typeof(coins[2]) !== "undefined" ? true : false,
+                    dataPoints : dataPoints3
+                },
+                {
+                    type : "line",
+                    xValueType: "dateTime",
+                    name: typeof(coins[3]) !== "undefined" ? coins[3].name + "(" + coins[3].symbol + ")" : "",
+                    xValueFormatString: "hh:mm:ss TT",
+                    yValueFormatString: "##.00mn",
+                    showInLegend: typeof(coins[3]) !== "undefined" ? true : false,
+                    dataPoints : dataPoints4
+                },
+                {
+                    type : "line",
+                    xValueType: "dateTime",
+                    name: typeof(coins[4]) !== "undefined" ? coins[4].name + "(" + coins[4].symbol + ")" : "",
+                    xValueFormatString: "hh:mm:ss TT",
+                    yValueFormatString: "##.00mn",
+                    showInLegend: typeof(coins[4]) !== "undefined" ? true : false,
+                    dataPoints : dataPoints5
+                },
+            ]
+    });
+
+    chart.render();
+
+    return chart;
 }
 
 function toggleDataSeries(e) {
@@ -312,6 +302,7 @@ function toggleDataSeries(e) {
     } else {
         e.dataSeries.visible = true;
     }
+
     e.chart.render();
 }
 
