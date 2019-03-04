@@ -136,12 +136,13 @@ $('#live-reports').click(function () {
         $('#each-coin').hide();
         $('#about-page-content').hide();
         $('#chartContainer').show();
-        APIcallPrice(coins);
+        defineDataPoints(coins);
     }
 });
 
 //use second link to get coins since third link doesn't have most coins
-function APIcallPrice(coins) {
+//define data points for graph
+function defineDataPoints(coins) {
     let dataPoints = [];
     let dataPoints2 = [];
     let dataPoints3 = [];
@@ -153,35 +154,35 @@ function APIcallPrice(coins) {
         if (typeof(coins[0]) !== 'undefined') {
             let id = coins[0].id;
             let symbol = coins[0].symbol;
-            updateData(id, (resp, err) => {
+            getCoinValue(id, (resp, err) => {
                 dataPoints.push(resp);
             });
         }
         if (typeof(coins[1]) !== 'undefined') {
             let id = coins[1].id;
             let symbol = coins[1].symbol;
-            updateData(id, (resp, err) => {
+            getCoinValue(id, (resp, err) => {
                 dataPoints2.push(resp);
             });
         }
         if (typeof(coins[2]) !== 'undefined') {
             let id = coins[2].id;
             let symbol = coins[2].symbol;
-            updateData(id, (resp, err) => {
+            getCoinValue(id, (resp, err) => {
                 dataPoints3.push(resp);
             });
         }
         if (typeof(coins[3]) !== 'undefined') {
             let id = coins[3].id;
             let symbol = coins[3].symbol;
-            updateData(id, (resp, err) => {
+            getCoinValue(id, (resp, err) => {
                 dataPoints4.push(resp);
             });
         }
         if (typeof(coins[4]) !== 'undefined') {
             let id = coins[4].id;
             let symbol = coins[4].symbol;
-            updateData(id, (resp, err) => {
+            getCoinValue(id, (resp, err) => {
                 dataPoints5.push(resp);
             });
         }
@@ -195,8 +196,8 @@ function APIcallPrice(coins) {
     }
 }
 
-//update data in chart
-function updateData(id, callback) {
+//get coin value
+function getCoinValue(id, callback) {
         $.ajax({
             url: 'https://api.coingecko.com/api/v3/coins/' + id,
             method: 'GET'
@@ -374,12 +375,6 @@ $(document).on('click', '.cancel-changes', function () {
     clearSelectedCoinsModal();
 });
 
-//show the modal that was built
-function showAlertModal() {
-    buildModal();
-    showModal();
-}
-
 //build modal
 function buildModal() {
     var coinListHTML = '';
@@ -392,6 +387,11 @@ function buildModal() {
     $('.currently-added-coins').html(coinListHTML);
 }
 
+//show the modal that was built
+function showAlertModal() {
+    buildModal();
+    showModal();
+}
 
 //empty the array of coins selected in the modal
 function clearSelectedCoinsModal() {
