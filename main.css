@@ -120,3 +120,7 @@ main{
 div.modal-content{
     font-family: 'Karla', sans-serif;
 }
+
+header{
+    margin-bottom:3%;
+}
