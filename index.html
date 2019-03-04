@@ -13,8 +13,8 @@
     <script src="/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="/node_modules/jquery-parallax.js/parallax.min.js"></script>
     <script src="/node_modules/canvasjs/dist/jquery.canvasjs.min.js"></script>
-    
-     
+
+
 </head>
 
 <body id="all-content">
@@ -51,6 +51,32 @@
     <div id="main-content">
         <div class="row" style="display:none;" id="loading"> <img src="imgs/progress.gif"></div>
         <div id="chartContainer" style="height: 300px; width: 100%; display:none;"></div>
+
+        <div id="about-page-content" style="display:none;">
+            <div class="row">
+                <div class="col-1"></div>
+                <div class="col-2">
+                    <img src="imgs/shifra.jpg" alt="pic-of-shifra" id="about-img">
+                </div>
+                <h2 class="col-1" id="about-header">About the Project</h2>
+                <div class="col-4" id="about-body">
+                    <p>
+                        This site is designed to display 100 virtual coins and give you the ability
+                        to see live reports of their value.
+                    </p>
+                    <p>On the home page, you'll see each of these coins. When you click on "more info," you can see
+                        the value of these coins in USD, NIS, and EUR. You can also select up to five coins and view live reports for them on a graph. Please note: If you try to select a sixth coin, you'll get a pop-up that will
+                        request that you unselect one of the coins in order to add a different one.
+                    </p>
+                    <p>Once you've selected some coins, you can click on the "live reports" page in order to see a graph
+                        with each of the coins that you've selected. 
+                        This graph will display the value of each of the coins
+                        every two seconds.
+                    </p>
+                </div>
+            </div>
+        </div>
+
         <div class="row" id="each-coin">
 
         </div>
@@ -89,4 +115,5 @@
         <script src="scripts/main.js"></script>
 
 </body>
+
 </html>
