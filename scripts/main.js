@@ -37,7 +37,7 @@ function getCoins() {
 
 //display main content when function is called
 function displayMainContent(data) {
-    let html = `<div class="col-md-4 col-xs-12 col-sm-4"> 
+    let html = `<div class="col-lg-4 col-md-4 col-xs-12 col-sm-4"> 
         <div id="coin">
                 <div class="coin-text">
                     <div class="row">
