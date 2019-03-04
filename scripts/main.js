@@ -186,7 +186,6 @@ function defineDataPoints(coins) {
                 dataPoints5.push(resp);
             });
         }
-        chart.options.title.text = "Live Reports of Cryptocurrency Value";
         chart.render();
         $('#loading').hide();
     };
@@ -219,7 +218,7 @@ function displayGraph(dataPoints, dataPoints2, dataPoints3, dataPoints4, dataPoi
             exportEnabled: true,
             animationEnabled: true,
             title: {
-                text: "Coin Value Over Time"
+                text: "Live Reports of Cryptocurrency Value"
             },
             axisX:{
                 title: "Time",
