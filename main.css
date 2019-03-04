@@ -124,3 +124,18 @@ div.modal-content{
 header{
     margin-bottom:3%;
 }
+
+#about-img{
+    width:160px;
+    border:1px solid rgb(92, 92, 92);
+}
+
+#about-header{
+    font-weight:700;
+    text-align:justify;
+}
+
+#about-body{
+    text-align:justify;
+    margin-left:10px;
+}
