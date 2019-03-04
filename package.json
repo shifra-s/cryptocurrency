@@ -1,10 +1,9 @@
 {
-  "name": "",
-  "version": "",
+  "name": "cryptocurrency",
+  "version": "0.0.0",
   "dependencies": {
     "bootstrap": "^4.2.1",
     "canvasjs": "^1.8.1",
-    "jquery": "^3.3.1",
-    "jquery-parallax.js": "^1.5.0"
-  }
+    "jquery": "^3.3.1"
+    }
 }
