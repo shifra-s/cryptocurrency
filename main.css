@@ -4,11 +4,6 @@ body#all-content,header,nav.navbar{
     font-family: 'Karla', sans-serif;
 }
 
-/* .parallax-window {
-    min-height: 250px;
-    background: transparent;
-} */
-
 
 .parallax { 
     background-image: url("imgs/banner.jpg");
@@ -31,6 +26,12 @@ main{
     width:95%;
     margin:20px;
     padding:20px;
+}
+
+@media screen and (min-width: 768px) and (max-width: 1100px)  {
+    #coin{
+        padding-right: 58px;
+    }   
 }
 
 #symbol{
