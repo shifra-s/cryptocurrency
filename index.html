@@ -55,17 +55,19 @@
     </header>
 
     <div id="main-content">
-        <div class="row" style="display:none;" id="loading"> <img src="imgs/progress.gif"></div>
+            <div style="display:none; width:50%;" id="loading"> 
+                <img class="col-12" style="width:70%;" src="imgs/progress.gif">
+            </div>
         <div id="chartContainer" style="height: 300px; width: 100%; display:none;"></div>
 
         <div id="about-page-content" style="display:none;">
             <div class="row">
-                <div class="col-1"></div>
-                <div class="col-2">
+                <div class="col-md-1 col-sm-1 col-xs-0"></div>
+                <div class="col-md-2 col-sm-6 col-xs-6">
                     <img src="imgs/shifra.jpg" alt="pic-of-shifra" id="about-img">
                 </div>
-                <h2 class="col-1" id="about-header">About the Project</h2>
-                <div class="col-4" id="about-body">
+                <h2 class="col-md-1 col-sm-6 col-xs-6" id="about-header">About the Project</h2>
+                <div class="col-md-4 col-sm-6 col-xs-6" id="about-body">
                     <p>
                         This site is designed to display 100 virtual coins and give you the ability
                         to see live reports of their value.
@@ -119,7 +121,6 @@
 
         <div id="live-reports-chart" style="height:400px;"></div>
 
-        <div class="loader"></div>
         <script src="scripts/main.js"></script>
 
 </body>
