@@ -7,12 +7,6 @@ $(window).on('load', function () {
     getCoins();
 });
 
-
-//parallax
-$('.parallax-window').parallax({
-    imageSrc: '/imgs/banner.jpg'
-});
-
 //get the coins when "home" is clicked in navbar
 $('#coins').click(function (e) {
     e.preventDefault();
@@ -217,6 +211,7 @@ function updateData(id, callback) {
         });
 }
 
+//display the graph
 function displayGraph(dataPoints, dataPoints2, dataPoints3, dataPoints4, dataPoints5) {
    let chart = new CanvasJS.Chart("chartContainer", {
             exportEnabled: true,
