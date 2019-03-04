@@ -70,6 +70,7 @@ function displayMainContent(data) {
 
 $("#coins").on("click", function() {
    $('#chartContainer').hide();
+   $('#about-page-content').hide();
    $('#each-coin').show();
 });
 
@@ -137,6 +138,7 @@ $('#live-reports').click(function () {
     else {
         $('#loading').show();
         $('#each-coin').hide();
+        $('#about-page-content').hide();
         $('#chartContainer').show();
         APIcallPrice(coins);
     }
@@ -415,4 +417,8 @@ function showModal() {
     $('#myModal').modal('show');
 }
 
-
+$('#about').click(function (){
+    $('#chartContainer').hide();
+   $('#each-coin').hide();
+    $('#about-page-content').show();
+})
