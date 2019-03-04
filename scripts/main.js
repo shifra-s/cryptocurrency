@@ -16,6 +16,7 @@ $('#coins').click(function (e) {
 //initialize empty array of coins
 //api call to show first 100 coins when "coins" link is clicked
 function getCoins() {
+    $('#loading').show();
     $.ajax({
         url: 'https://api.coingecko.com/api/v3/coins/list',
         method: 'GET'
@@ -30,6 +31,7 @@ function getCoins() {
             moreInfoData(id);
             displayMainContent(coinsResults[i]);
         }
+        $('#loading').hide();
     });
 }
 
