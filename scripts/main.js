@@ -1,3 +1,4 @@
+
 //global variables - initialize empty array of coins & empty of array of btns checked in the modal
 let modalCheckedButtons = [];
 let coins = [];
@@ -15,6 +16,7 @@ $('#coins').click(function (e) {
 
 //api call to show first 100 coins when "coins" link is clicked
 function getCoins() {
+
     $('#loading').show();
     $.ajax({
         url: 'https://api.coingecko.com/api/v3/coins/list',
@@ -128,7 +130,12 @@ function getSymbols() {
 //go to the live reports page if at least one coin is selected
 $('#live-reports').click(function () {
     if (coins.length < 1) {
-        alert('you havent picked any coins!');
+        swal({
+            title:"You haven't picked any coins!",
+            text:"Please select at least one coin in order to view live reports",
+            icon: "error"
+        });
+           
         return;
     }
     else {
