@@ -11,6 +11,7 @@ $(window).on('load', function () {
 //get the coins when "home" is clicked in navbar
 $('#coins').click(function (e) {
     e.preventDefault();
+    $('#each-coin').empty();
     getCoins();
 });
 
@@ -26,18 +27,45 @@ function getCoins() {
             d = JSON.parse(d);
         coinsResults = d;
 
+        let id = '';
         //loop through the results and use the template to display each coin
         for (let i = 0; i < 100; i++) {
-            let id = (coinsResults[i].id).toString();
+            id = (coinsResults[i].id).toString();
             moreInfoData(id);
             displayMainContent(coinsResults[i]);
+
+            for (let i = 0; i < coins.length; i++) {
+                if (id == coins[i].id) {
+                    $('.' + id).prop('checked', true);
+
+                }
+            }
         }
+
         $('#loading').hide();
+
     });
 }
 
+function checkReportsList(id) {
+    console.log('id its gettttinggg when checking---->', id);
+    //check if coin is in list of coins for reports and if so tick on
+    for (let i = 0; i < coins.length; i++) {
+        if (id == coins[i].id) {
+            $('.' + id).prop('checked', true);
+            console.log('checking if shold get report');
+        } else {
+            $('.' + id).prop('checked', false);
+        }
+    }
+}
+
 //display main content when function is called
-function displayMainContent(data) {
+function displayMainContent(data, d) {
+    if (d) {
+        data = d;
+    }
+    
     let html = `<div class="col-lg-4 col-md-4 col-xs-12 col-sm-4"> 
         <div id="coin">
                 <div class="coin-text">
@@ -61,29 +89,73 @@ function displayMainContent(data) {
             </div>
         </div>
         </div>`;
-
     $('#each-coin').append(html);
+
 }
 
-$("#coins").on("click", function() {
-   $('#chartContainer').hide();
-   $('#about-page-content').hide();
-   $('#each-coin').show();
+$("#coins").on("click", function () {
+    $('#chartContainer').hide();
+    $('#about-page-content').hide();
+    $('#each-coin').show();
 });
 
-//search bar-find coin
-$("#search-btn").on("click", function() {
-    let g = $("#search-input").val().toLowerCase();
-    $(".coin-text .row #symbol").each(function() {
-        let s = $(this).text();
-        $(this).closest('#coin')[ s.indexOf(g) !== -1 ? 'show' : 'hide' ]();
-    });
+
+//empty page on search click
+function emptyContent() {
+    $('#each-coin').empty();
+}
+
+//search button on click
+$("#search-btn").on("click", function () {
+    $('#loading').show();
+    emptyContent();
+    searchForCoin();
 });
-$('input[type=search]').on('search', function () {
-    $(".coin-text .row #symbol").each(function() {
-        $(this).closest('#coin')['show']();
+
+//find coin where symbol equals symbol searched
+function searchForCoin() {
+    let searchedCoin = '';
+    $.ajax('https://api.coingecko.com/api/v3/coins/list').done(function (d) {
+        for (let i = 0; i < 100; i++) {
+            if (d[i].symbol == $("#search-input").val()) {
+                searchedCoin = d[i].id;
+                break;
+            }
+        }
+        if (searchedCoin !== '') {
+            displayCoin(searchedCoin);
+        } else {
+            $('#loading').hide();
+            emptyContent();
+            swal('no coin found!');
+        }
+    })
+}
+
+//display coin
+function displayCoin(searchedCoin) {
+    let id = searchedCoin;
+    $.ajax({
+        url: 'https://api.coingecko.com/api/v3/coins/' + id,
+        method: 'GET'
+    }).done(function (d) {
+        if (typeof d === 'string')
+            d = JSON.parse(d);
+
+        console.log(d, 'this is dataaaa');
+
+        displayMainContent(d);
+
+        for (let i = 0; i < coins.length; i++) {
+            if (searchedCoin == coins[i].id) {
+                $('.' + id).prop('checked', true);
+            }
+        }
+        $('#loading').hide();
     });
-});
+}
+
+
 
 //api call to get more info - set data in local storage
 function moreInfoData(id) {
@@ -131,11 +203,11 @@ function getSymbols() {
 $('#live-reports').click(function () {
     if (coins.length < 1) {
         swal({
-            title:"You haven't picked any coins!",
-            text:"Please select at least one coin in order to view live reports",
+            title: "You haven't picked any coins!",
+            text: "Please select at least one coin in order to view live reports",
             icon: "error"
         });
-           
+
         return;
     }
     else {
@@ -155,145 +227,145 @@ function defineDataPoints(coins) {
     let dataPoints3 = [];
     let dataPoints4 = [];
     let dataPoints5 = [];
-    let chart  = displayGraph(dataPoints, dataPoints2, dataPoints3, dataPoints4, dataPoints5);
+    let chart = displayGraph(dataPoints, dataPoints2, dataPoints3, dataPoints4, dataPoints5);
     for (let i = 0; i < coins.length; i++) {
-    let updateChart = function () {
-        if (typeof(coins[0]) !== 'undefined') {
-            let id = coins[0].id;
-            let symbol = coins[0].symbol;
-            getCoinValue(id, (resp, err) => {
-                dataPoints.push(resp);
-            });
-        }
-        if (typeof(coins[1]) !== 'undefined') {
-            let id = coins[1].id;
-            let symbol = coins[1].symbol;
-            getCoinValue(id, (resp, err) => {
-                dataPoints2.push(resp);
-            });
-        }
-        if (typeof(coins[2]) !== 'undefined') {
-            let id = coins[2].id;
-            let symbol = coins[2].symbol;
-            getCoinValue(id, (resp, err) => {
-                dataPoints3.push(resp);
-            });
-        }
-        if (typeof(coins[3]) !== 'undefined') {
-            let id = coins[3].id;
-            let symbol = coins[3].symbol;
-            getCoinValue(id, (resp, err) => {
-                dataPoints4.push(resp);
-            });
-        }
-        if (typeof(coins[4]) !== 'undefined') {
-            let id = coins[4].id;
-            let symbol = coins[4].symbol;
-            getCoinValue(id, (resp, err) => {
-                dataPoints5.push(resp);
-            });
-        }
-        chart.render();
-        $('#loading').hide();
-    };
+        let updateChart = function () {
+            if (typeof (coins[0]) !== 'undefined') {
+                let id = coins[0].id;
+                let symbol = coins[0].symbol;
+                getCoinValue(id, (resp, err) => {
+                    dataPoints.push(resp);
+                });
+            }
+            if (typeof (coins[1]) !== 'undefined') {
+                let id = coins[1].id;
+                let symbol = coins[1].symbol;
+                getCoinValue(id, (resp, err) => {
+                    dataPoints2.push(resp);
+                });
+            }
+            if (typeof (coins[2]) !== 'undefined') {
+                let id = coins[2].id;
+                let symbol = coins[2].symbol;
+                getCoinValue(id, (resp, err) => {
+                    dataPoints3.push(resp);
+                });
+            }
+            if (typeof (coins[3]) !== 'undefined') {
+                let id = coins[3].id;
+                let symbol = coins[3].symbol;
+                getCoinValue(id, (resp, err) => {
+                    dataPoints4.push(resp);
+                });
+            }
+            if (typeof (coins[4]) !== 'undefined') {
+                let id = coins[4].id;
+                let symbol = coins[4].symbol;
+                getCoinValue(id, (resp, err) => {
+                    dataPoints5.push(resp);
+                });
+            }
+            chart.render();
+            $('#loading').hide();
+        };
 
-    // update chart every 2 seconds
-    setInterval(function(){updateChart()}, 2000);
+        // update chart every 2 seconds
+        setInterval(function () { updateChart() }, 2000);
     }
 }
 
 //get coin value
 function getCoinValue(id, callback) {
-        $.ajax({
-            url: 'https://api.coingecko.com/api/v3/coins/' + id,
-            method: 'GET'
-        }).done(function (resp) {
-                let price = resp.market_data.ath.usd;
-                let date = new Date();
-                let time = date.setTime(date.getTime() + 30000);
+    $.ajax({
+        url: 'https://api.coingecko.com/api/v3/coins/' + id,
+        method: 'GET'
+    }).done(function (resp) {
+        let price = resp.market_data.ath.usd;
+        let date = new Date();
+        let time = date.setTime(date.getTime() + 30000);
 
-                let newObj = {};
-                newObj['y'] = price;
-                newObj['x'] = time;
-                callback(newObj);
-        });
+        let newObj = {};
+        newObj['y'] = price;
+        newObj['x'] = time;
+        callback(newObj);
+    });
 }
 
 //display the graph
 function displayGraph(dataPoints, dataPoints2, dataPoints3, dataPoints4, dataPoints5) {
-   let chart = new CanvasJS.Chart("chartContainer", {
-            exportEnabled: true,
-            animationEnabled: true,
-            title: {
-                text: "Live Reports of Cryptocurrency Value"
-            },
-            axisX:{
-                title: "Time",
-                intervalType: "minute",
-                valueFormatString: "hh:mm:ss tt",
-            },
-            axisY: {
-                title: "Coin Value",
-                titleFontColor: "#4F81BC",
-                lineColor: "#4F81BC",
-                labelFontColor: "#4F81BC",
-                tickColor: "#4F81BC",
-                includeZero: false,
-                prefix: "$",
-            },
-            toolTip: {
-                shared: true
-            },
-            legend: {
-                cursor: "pointer",
-                itemclick: toggleDataSeries
-            },
-            data : [{
-                    type : "line",
-                    xValueType: "dateTime",
-                    name: coins[0].name + "(" + coins[0].symbol + ")",
-                    xValueFormatString: "hh:mm:ss TT",
-                    yValueFormatString: "##.00mn",
-                    showInLegend: typeof(coins[0]) !== "undefined" ? true : false,
-                    dataPoints : dataPoints
-                },
-                {
-                    type : "line",
-                    xValueType: "dateTime",
-                    name: typeof(coins[1]) !== "undefined" ? coins[1].name + "(" + coins[1].symbol + ")" : "",
-                    xValueFormatString: "hh:mm:ss TT",
-                    yValueFormatString: "##.00mn",
-                    showInLegend: typeof(coins[1]) !== "undefined" ? true : false,
-                    dataPoints : dataPoints2
-                },
-                {
-                    type : "line",
-                    xValueType: "dateTime",
-                    name:typeof(coins[2]) !== "undefined" ? coins[2].name + "(" + coins[2].symbol + ")" : "",
-                    xValueFormatString: "hh:mm:ss TT",
-                    yValueFormatString: "##.00mn",
-                    showInLegend: typeof(coins[2]) !== "undefined" ? true : false,
-                    dataPoints : dataPoints3
-                },
-                {
-                    type : "line",
-                    xValueType: "dateTime",
-                    name: typeof(coins[3]) !== "undefined" ? coins[3].name + "(" + coins[3].symbol + ")" : "",
-                    xValueFormatString: "hh:mm:ss TT",
-                    yValueFormatString: "##.00mn",
-                    showInLegend: typeof(coins[3]) !== "undefined" ? true : false,
-                    dataPoints : dataPoints4
-                },
-                {
-                    type : "line",
-                    xValueType: "dateTime",
-                    name: typeof(coins[4]) !== "undefined" ? coins[4].name + "(" + coins[4].symbol + ")" : "",
-                    xValueFormatString: "hh:mm:ss TT",
-                    yValueFormatString: "##.00mn",
-                    showInLegend: typeof(coins[4]) !== "undefined" ? true : false,
-                    dataPoints : dataPoints5
-                },
-            ]
+    let chart = new CanvasJS.Chart("chartContainer", {
+        exportEnabled: true,
+        animationEnabled: true,
+        title: {
+            text: "Live Reports of Cryptocurrency Value"
+        },
+        axisX: {
+            title: "Time",
+            intervalType: "minute",
+            valueFormatString: "hh:mm:ss tt",
+        },
+        axisY: {
+            title: "Coin Value",
+            titleFontColor: "#4F81BC",
+            lineColor: "#4F81BC",
+            labelFontColor: "#4F81BC",
+            tickColor: "#4F81BC",
+            includeZero: false,
+            prefix: "$",
+        },
+        toolTip: {
+            shared: true
+        },
+        legend: {
+            cursor: "pointer",
+            itemclick: toggleDataSeries
+        },
+        data: [{
+            type: "line",
+            xValueType: "dateTime",
+            name: coins[0].name + "(" + coins[0].symbol + ")",
+            xValueFormatString: "hh:mm:ss TT",
+            yValueFormatString: "##.00mn",
+            showInLegend: typeof (coins[0]) !== "undefined" ? true : false,
+            dataPoints: dataPoints
+        },
+        {
+            type: "line",
+            xValueType: "dateTime",
+            name: typeof (coins[1]) !== "undefined" ? coins[1].name + "(" + coins[1].symbol + ")" : "",
+            xValueFormatString: "hh:mm:ss TT",
+            yValueFormatString: "##.00mn",
+            showInLegend: typeof (coins[1]) !== "undefined" ? true : false,
+            dataPoints: dataPoints2
+        },
+        {
+            type: "line",
+            xValueType: "dateTime",
+            name: typeof (coins[2]) !== "undefined" ? coins[2].name + "(" + coins[2].symbol + ")" : "",
+            xValueFormatString: "hh:mm:ss TT",
+            yValueFormatString: "##.00mn",
+            showInLegend: typeof (coins[2]) !== "undefined" ? true : false,
+            dataPoints: dataPoints3
+        },
+        {
+            type: "line",
+            xValueType: "dateTime",
+            name: typeof (coins[3]) !== "undefined" ? coins[3].name + "(" + coins[3].symbol + ")" : "",
+            xValueFormatString: "hh:mm:ss TT",
+            yValueFormatString: "##.00mn",
+            showInLegend: typeof (coins[3]) !== "undefined" ? true : false,
+            dataPoints: dataPoints4
+        },
+        {
+            type: "line",
+            xValueType: "dateTime",
+            name: typeof (coins[4]) !== "undefined" ? coins[4].name + "(" + coins[4].symbol + ")" : "",
+            xValueFormatString: "hh:mm:ss TT",
+            yValueFormatString: "##.00mn",
+            showInLegend: typeof (coins[4]) !== "undefined" ? true : false,
+            dataPoints: dataPoints5
+        },
+        ]
     });
 
     chart.render();
@@ -419,8 +491,8 @@ function showModal() {
     $('#myModal').modal('show');
 }
 
-$('#about').click(function (){
+$('#about').click(function () {
     $('#chartContainer').hide();
-   $('#each-coin').hide();
+    $('#each-coin').hide();
     $('#about-page-content').show();
 })
