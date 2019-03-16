@@ -203,3 +203,10 @@ div img#about-img{
         font-size:2.8em;
     }
 }
+
+.progress-gif{
+    display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width:30%;
+}
